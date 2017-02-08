@@ -141,7 +141,7 @@ class Router
         }
 
         if (app()['router']->current()) {
-            return $this->findRouteNameByPath(app()['router']->current()->getPath());
+            return $this->findRouteNameByPath(app()['router']->current()->uri());
         }
 
         return false;
