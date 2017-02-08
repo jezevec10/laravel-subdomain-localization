@@ -6,6 +6,7 @@ class LocalizeTest extends TestCase
     protected $pathLocalized = 'localized';
     protected $pathNotLocalized = 'not-localized';
 
+
     /**
      * It returns the available locales
      *
@@ -27,9 +28,9 @@ class LocalizeTest extends TestCase
      */
     public function it_does_not_redirect_a_non_localized_route()
     {
-        $this->sendRequest('GET', $this->pathNotLocalized);
+        $response = $this->sendRequest('GET', $this->pathNotLocalized);
 
-        $this->assertResponseOk();
+        $response->assertStatus(200);
     }
 
     /**
@@ -39,13 +40,13 @@ class LocalizeTest extends TestCase
      */
     public function it_does_not_redirect_if_locale_is_not_missing()
     {
-        $this->sendRequest('GET', $this->pathLocalized, 'de');
+        $response = $this->sendRequest('GET', $this->pathLocalized, 'de');
 
         $this->assertEquals(app()->getLocale(), 'de');
 
         $this->assertFalse(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseOk();
+        $response->assertStatus(200);
     }
 
     /**
@@ -55,13 +56,13 @@ class LocalizeTest extends TestCase
      */
     public function it_detects_and_sets_the_locale_from_the_url()
     {
-        $this->sendRequest('GET', $this->pathLocalized, 'de');
+        $response = $this->sendRequest('GET', $this->pathLocalized, 'de');
 
         $this->assertEquals($this->app->getLocale(), 'de');
 
         $this->assertFalse(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseOk();
+        $response->assertStatus(200);
     }
 
     /**
@@ -71,15 +72,15 @@ class LocalizeTest extends TestCase
      */
     public function it_detects_and_sets_the_locale_from_the_cookies()
     {
-        $this->sendRequest('GET', $this->pathLocalized, null, [], ['locale' => 'de']);
+        $response = $this->sendRequest('GET', $this->pathLocalized, null, [], ['locale' => 'de']);
 
         $this->assertEquals($this->app->getLocale(), 'de');
 
         $this->assertTrue(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseStatus(302);
+        $response->assertStatus(302);
 
-        $this->assertRedirectedTo($this->getUri($this->pathLocalized, 'de'));
+        $response->assertRedirect($this->getUri($this->pathLocalized, 'de'));
     }
     
     /**
@@ -92,15 +93,15 @@ class LocalizeTest extends TestCase
         // Disable cookie localization
         app('config')->set('localization.cookie_localization', false);
 
-        $this->sendRequest('GET', $this->pathLocalized, null, [], ['locale' => 'de']);
+        $response = $this->sendRequest('GET', $this->pathLocalized, null, [], ['locale' => 'de']);
 
         $this->assertEquals($this->defaultLocale, $this->app->getLocale());
 
         $this->assertTrue(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseStatus(302);
+        $response->assertStatus(302);
 
-        $this->assertRedirectedTo($this->getUri($this->pathLocalized, $this->defaultLocale));
+        $response->assertRedirect($this->getUri($this->pathLocalized, $this->defaultLocale));
     }
 
     /**
@@ -110,15 +111,15 @@ class LocalizeTest extends TestCase
      */
     public function it_detects_and_sets_the_locale_from_the_browser()
     {
-        $this->sendRequest('GET', $this->pathLocalized, null, [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de']);
+        $response = $this->sendRequest('GET', $this->pathLocalized, null, [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de']);
 
         $this->assertEquals($this->app->getLocale(), 'de');
 
         $this->assertTrue(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseStatus(302);
+        $response->assertStatus(302);
 
-        $this->assertRedirectedTo($this->getUri($this->pathLocalized, 'de'));
+        $response->assertRedirect($this->getUri($this->pathLocalized, 'de'));
     }
 
     /**
@@ -131,15 +132,15 @@ class LocalizeTest extends TestCase
         // Disable browser localization
         app('config')->set('localization.browser_localization', false);
 
-        $this->sendRequest('GET', $this->pathLocalized, null, [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de']);
+        $response = $this->sendRequest('GET', $this->pathLocalized, null, [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de']);
 
         $this->assertEquals($this->defaultLocale, $this->app->getLocale());
 
         $this->assertTrue(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseStatus(302);
+        $response->assertStatus(302);
 
-        $this->assertRedirectedTo($this->getUri($this->pathLocalized, $this->defaultLocale));
+        $response->assertRedirect($this->getUri($this->pathLocalized, $this->defaultLocale));
     }
 
     /**
@@ -149,15 +150,15 @@ class LocalizeTest extends TestCase
      */
     public function it_detects_and_sets_the_locale_from_the_config()
     {
-        $this->sendRequest('GET', $this->pathLocalized);
+        $response = $this->sendRequest('GET', $this->pathLocalized);
 
         $this->assertEquals($this->defaultLocale, $this->app->getLocale());
 
         $this->assertTrue(app('localization.localize')->shouldRedirect());
 
-        $this->assertResponseStatus(302);
+        $response->assertStatus(302);
 
-        $this->assertRedirectedTo($this->getUri($this->pathLocalized, $this->defaultLocale));
+        $response->assertRedirect($this->getUri($this->pathLocalized, $this->defaultLocale));
     }
 
     /**
@@ -170,7 +171,7 @@ class LocalizeTest extends TestCase
         $response = $this->sendRequest('GET', $this->pathLocalized, 'de');
 
         $this->assertTrue($this->responseHasCookies($response, ['locale' => 'de']));
-        $this->assertResponseOk();
+        $response->assertStatus(200);
     }
     
     /**
@@ -186,7 +187,7 @@ class LocalizeTest extends TestCase
         $response = $this->sendRequest('GET', $this->pathLocalized, 'de');
 
         $this->assertFalse($this->responseHasCookies($response, ['locale' => 'de']));
-        $this->assertResponseOk();
+        $response->assertStatus(200);
     }
 
 }
