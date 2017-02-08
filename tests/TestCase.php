@@ -12,21 +12,49 @@ class TestCase extends OrchestraTestCase
 
     protected $defaultLocale = 'en';
 
-    public function setUp()
+    protected function getPackageProviders($app)
     {
-        parent::setUp();
+        return [
+            'LaurentEsc\Localization\LocalizationServiceProvider'
+        ];
+    }
 
-        $this->refreshConfig();
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Localize' => 'LaurentEsc\Localization\Facades\Localize',
+            'Router' => 'LaurentEsc\Localization\Facades\Router',
+        ];
     }
 
     /**
-     * Refresh the configuration
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
      */
-    public function refreshConfig()
+    protected function getEnvironmentSetUp($app)
     {
-        app('config')->set('localization.domain', $this->domain);
-        app('config')->set('app.fallback_locale', $this->defaultLocale);
+        // Setup default database to use sqlite :memory:
+        $app['config']->set('localization.domain', $this->domain);
+        $app['config']->set('app.fallback_locale', $this->defaultLocale);
     }
+
+//    public function setUp()
+//    {
+//        parent::setUp();
+//
+//        $this->refreshConfig();
+//    }
+//
+//    /**
+//     * Refresh the configuration
+//     */
+//    public function refreshConfig()
+//    {
+//        app('config')->set('localization.domain', $this->domain);
+//        app('config')->set('app.fallback_locale', $this->defaultLocale);
+//    }
 
     /**
      * Refresh application & config during a test

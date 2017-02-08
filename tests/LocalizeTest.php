@@ -6,21 +6,6 @@ class LocalizeTest extends TestCase
     protected $pathLocalized = 'localized';
     protected $pathNotLocalized = 'not-localized';
 
-    protected function getPackageProviders($app)
-    {
-        return [
-            'LaurentEsc\Localization\LocalizationServiceProvider'
-        ];
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return [
-            'Localize' => 'LaurentEsc\Localization\Facades\Localize',
-            'Router' => 'LaurentEsc\Localization\Facades\Router',
-        ];
-    }
-
     /**
      * It returns the available locales
      *

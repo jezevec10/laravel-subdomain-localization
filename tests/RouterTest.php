@@ -14,21 +14,6 @@ class RouterTest extends TestCase
     protected $enPathWithParameter1 = 'hello/samplename';
     protected $routeParameters = ['username' => 'samplename'];
 
-    protected function getPackageProviders($app)
-    {
-        return [
-            'LaurentEsc\Localization\LocalizationServiceProvider'
-        ];
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return [
-            'Localize' => 'LaurentEsc\Localization\Facades\Localize',
-            'Router' => 'LaurentEsc\Localization\Facades\Router',
-        ];
-    }
-
     /**
      * It translates routes
      *
