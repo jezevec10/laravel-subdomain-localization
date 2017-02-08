@@ -21,11 +21,11 @@ class RouterTest extends TestCase
      */
     public function it_reaches_translated_routes()
     {
-        $this->sendRequest('GET', $this->dePathWithoutParameter, 'de');
-        $this->assertResponseOk();
+        $response= $this->sendRequest('GET', $this->dePathWithoutParameter, 'de');
+        $response->assertStatus(200);
 
-        $this->sendRequest('GET', $this->enPathWithoutParameter, 'en');
-        $this->assertResponseOk();
+        $response = $this->sendRequest('GET', $this->enPathWithoutParameter, 'en');
+        $response->assertStatus(200);
     }
 
     /**
