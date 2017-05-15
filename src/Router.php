@@ -200,7 +200,7 @@ class Router
      * @param array|false $parsed_url Array of data from parse_url function
      * @return string               Returns URL as string.
      */
-    protected function unparseUrl($parsed_url)
+    public function unparseUrl($parsed_url)
     {
         if (empty($parsed_url)) {
             return "";
