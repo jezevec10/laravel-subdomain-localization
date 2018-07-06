@@ -17,7 +17,7 @@ class Localization
      */
     public function handle($request, Closure $next)
     {
-        if(config('language_redirect', 'true') == 'true'){
+        if(config('localization.language_redirect', 'true') == 'true'){
             if (Localize::shouldRedirect()) {
                 return new RedirectResponse(Router::getRedirectURL(), 302, ['Vary', 'Accept-Language']);
             }
