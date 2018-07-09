@@ -1,16 +1,9 @@
 <?php namespace LaurentEsc\Localization;
 
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class Localize
 {
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
 
     /**
      * If the detected locale is different from the url locale, we should redirect
@@ -19,6 +12,11 @@ class Localize
      */
     public function shouldRedirect()
     {
+        $request = app()['request'];
+        if(!$request->isMethod('get') || $request->ajax()){
+          return false;
+        }
+        
         $loc=$this->getCurrentLocale();
         return ($loc!='en' && $loc != $this->getUrlLocale());
     }

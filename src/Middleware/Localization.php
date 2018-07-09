@@ -19,9 +19,7 @@ class Localization
      */
     public function handle($request, Closure $next)
     {
-        if ($request->isMethod('get')
-            && !$request->ajax()
-            && Localize::shouldRedirect()) {
+        if (Localize::shouldRedirect()) {
             return new RedirectResponse(Router::getRedirectURL(), 302, ['Vary', 'Accept-Language']);
         }
         
