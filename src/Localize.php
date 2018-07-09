@@ -1,6 +1,7 @@
 <?php namespace LaurentEsc\Localization;
 
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class Localize
 {
@@ -18,7 +19,8 @@ class Localize
      */
     public function shouldRedirect()
     {
-        return $this->getCurrentLocale() != $this->getUrlLocale();
+        $loc=$this->getCurrentLocale();
+        return ($loc!='en' && $loc != $this->getUrlLocale());
     }
 
     /**
@@ -35,6 +37,10 @@ class Localize
         // Get the current locale from the URL
         $locale = $this->getUrlLocale();
 
+        if(!$this->isLocaleAvailable($locale) && app()['request']->has("langSwitch")){
+            $locale = app()['request']->get("langSwitch");
+        }
+        
         // Get the current locale from the cookies
         if (!$this->isLocaleAvailable($locale) && $this->isCookieLocalizationEnabled()) {
             $locale = $this->getCookieLocale();
@@ -146,7 +152,8 @@ class Localize
      */
     protected function setCookieLocale($locale)
     {
-        app()['cookie']->queue(app()['cookie']->forever(app()['config']->get('localization.cookie_name'), $locale));
+        $ver=app()['request']->cookie(app()['config']->get('localization.cookie_version'));
+        app()['cookie']->queue(app()['cookie']->forever(app()['config']->get('localization.cookie_name'), $ver."|".$locale));
     }
 
     /**
@@ -156,7 +163,20 @@ class Localize
      */
     protected function getCookieLocale()
     {
-        return app()['request']->cookie(app()['config']->get('localization.cookie_name'));
+        $str=app()['request']->cookie(app()['config']->get('localization.cookie_name'));
+        $ver=app()['request']->cookie(app()['config']->get('localization.cookie_version'));
+        $content="";
+        try {
+            $content = app()['Crypt']->decrypt($str);
+        } catch (DecryptException $e) {
+            $content="";
+        }
+        $arr=explode("|",$content);
+        if(count($arr)==2 && $arr[0]==$ver){
+            return $arr[1];
+        }else{
+            return "";
+        }
     }
 
     /**

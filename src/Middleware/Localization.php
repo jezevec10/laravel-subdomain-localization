@@ -11,18 +11,20 @@ class Localization
     /**
      * Handle an incoming request.
      *
+     * Redirect only GET requests, and not Ajax
+     *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if(config('localization.language_redirect', 'true') == 'true'){
-            if (Localize::shouldRedirect()) {
-                return new RedirectResponse(Router::getRedirectURL(), 302, ['Vary', 'Accept-Language']);
-            }
+        if ($request->isMethod('get')
+            && !$request->ajax()
+            && Localize::shouldRedirect()) {
+            return new RedirectResponse(Router::getRedirectURL(), 302, ['Vary', 'Accept-Language']);
         }
-
+        
         return $next($request);
     }
 

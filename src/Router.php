@@ -47,7 +47,7 @@ class Router
      */
     public function current($locale)
     {
-        return $this->url($this->getCurrentRouteName(), $this->getCurrentRouteAttributes(), $locale);
+        return $this->url($this->getCurrentRouteName(), $this->getCurrentRouteAttributes(), $locale, $locale=='en');
     }
 
     /**
@@ -82,7 +82,7 @@ class Router
      * @param string|false $locale
      * @return string|bool
      */
-    public function url($routeName, $routeAttributes = null, $locale = null)
+    public function url($routeName, $routeAttributes = null, $locale = null, $addLangSwitch=false)
     {
         // If no locale is given, we use the current locale
         if (!$locale) {
@@ -96,19 +96,25 @@ class Router
         // Retrieve the current URL components
         $parsed_url = $this->parsed_url;
 
-        // Add locale to the host
-        $parsed_url['host'] = $locale . '.' . $this->getDomain();
-
-        // Resolve the route path for the given route name
-        if (!$parsed_url['path'] = $this->findRoutePathByName($routeName, $locale)) {
-            return false;
-        }
+        // Add locale to the host, except the default locale
+        if($locale!='en')
+            $parsed_url['host'] = $locale . '.' . $this->getDomain();
 
         // If attributes are given, substitute them in the path
         if ($routeAttributes) {
             $parsed_url['path'] = $this->substituteAttributesInRoute($routeAttributes, $parsed_url['path']);
         }
 
+        if($addLangSwitch){
+            if (isset($parsed_url['query']) && $parsed_url['query']) {
+                if(!preg_match('/langSwitch/',$parsed_url['query'])){
+                    $parsed_url['query'] .= '&langSwitch='.$locale;
+                }
+            } else {
+                $parsed_url['query'] = 'langSwitch='.$locale;
+            }
+        }
+        
         return $this->unparseUrl($parsed_url);
     }
 
@@ -254,9 +260,9 @@ class Router
         $parsed_url = parse_url(app()['request']->fullUrl());
 
         // Don't store path, query and fragment
-        unset($parsed_url['path']);
-        unset($parsed_url['query']);
-        unset($parsed_url['fragment']);
+        //unset($parsed_url['path']);
+        //unset($parsed_url['query']);
+        //unset($parsed_url['fragment']);
 
         $parsed_url['host'] = $this->getDomain();
 
