@@ -1,9 +1,15 @@
 # Laravel-Subdomain-Localization
 
-[![Latest Stable Version](https://poser.pugx.org/industryarena/laravel-subdomain-localization/version)](https://packagist.org/packages/industryarena/laravel-subdomain-localization) [![Total Downloads](https://poser.pugx.org/industryarena/laravel-subdomain-localization/d/total.png)](https://packagist.org/packages/industryarena/laravel-subdomain-localization)
- [![Build Status](https://api.travis-ci.org/industryarena/Laravel-Subdomain-Localization.png)](https://travis-ci.org/industryarena/Laravel-Subdomain-Localization)
-
 Subdomain localization support for Laravel. Only for **Laravel 5.4** Version (Fork [LaurentEsc/Laravel-Subdomain-Localization](https://github.com/LaurentEsc/Laravel-Subdomain-Localization))
+
+**Changes from upstream:**
+- added cookie_version (lang selection resets on cookie version mismatch - e.g. 
+  then new languages are added and auto-detection via Accept-Language header is needed, 
+  even if the user already had a cookie with a language selection)
+- cookie encrypted, use EncryptCookies middleware
+- default language is without subdomain
+- switching to language without subdomain done with langSwitch param 
+- redirecting only GET request and only not ajax
 
 ## Table of Contents
 
