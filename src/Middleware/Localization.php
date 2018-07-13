@@ -4,6 +4,7 @@ use Illuminate\Http\RedirectResponse;
 use Closure;
 use LaurentEsc\Localization\Facades\Localize;
 use LaurentEsc\Localization\Facades\Router;
+use Illuminate\Support\Facades\Auth;
 
 class Localization
 {
@@ -19,6 +20,11 @@ class Localization
      */
     public function handle($request, Closure $next)
     {
+        // Override the app locale with the one set in the account settings
+        if(Auth::check() && $lang=Auth::user()->lang){
+            app()->setLocale($lang);
+        }
+        
         if (Localize::shouldRedirect()) {
             return new RedirectResponse(Router::getRedirectURL(), 302, ['Vary', 'Accept-Language']);
         }

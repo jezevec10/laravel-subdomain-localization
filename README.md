@@ -3,13 +3,14 @@
 Subdomain localization support for Laravel. Only for **Laravel 5.4** Version (Fork [LaurentEsc/Laravel-Subdomain-Localization](https://github.com/LaurentEsc/Laravel-Subdomain-Localization))
 
 **Changes from upstream:**
-- added cookie_version (lang selection resets on cookie version mismatch - e.g. 
+* Added cookie_version (lang selection resets on cookie version mismatch - e.g. 
   then new languages are added and auto-detection via Accept-Language header is needed, 
   even if the user already had a cookie with a language selection)
-- cookie encrypted, use EncryptCookies middleware
-- default language is without subdomain
-- switching to language without subdomain done with langSwitch param 
-- redirecting only GET request and only not ajax
+* Option to override the app locale with the account settings of auth-ed user (add Localization middleware to the web group), the user model should have a `lang` attribute
+* Cookie encrypted, use EncryptCookies middleware
+* Default language is without subdomain
+* Switching to language without subdomain done with langSwitch param 
+* Redirecting only GET request and only not ajax
 
 ## Table of Contents
 
