@@ -1,7 +1,7 @@
 <?php namespace LaurentEsc\Localization;
 
 use Illuminate\Contracts\Encryption\DecryptException;
-
+use Illuminate\Support\Facades\Crypt;
 class Localize
 {
 
@@ -165,7 +165,7 @@ class Localize
         $ver=app()['request']->cookie(app()['config']->get('localization.cookie_version'));
         $content="";
         try {
-            $content = app()['Crypt']->decrypt($str);
+            $content = Crypt::decrypt($str);
         } catch (DecryptException $e) {
             $content="";
         }
