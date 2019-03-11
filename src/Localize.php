@@ -165,7 +165,8 @@ class Localize
         $ver=app()['request']->cookie(app()['config']->get('localization.cookie_version'));
         $content="";
         try {
-            $content = Crypt::decrypt($str);
+            //$content = Crypt::decrypt($str);       //Laravel v5.4 and less
+            $content = Crypt::decrypt($str,false);   //Laravel v5.5 and higher - the unserialize would trigger PHP error
         } catch (DecryptException $e) {
             $content="";
         }
