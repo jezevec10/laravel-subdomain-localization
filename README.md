@@ -11,7 +11,7 @@ Subdomain localization support for Laravel. Only for **Laravel 5.5+** Version (F
 * Default language is without subdomain
 * Switching to language without subdomain done with langSwitch param 
 * Redirecting only GET request and only not ajax
-* To support Laravel 5.4, remove 2nd parameter to Crypt::decrypt(), see b01d1d9e
+* To support Laravel 5.4, remove 2nd parameter to `Crypt::decrypt()` in Localize.php, see b01d1d9e
 
 ## Table of Contents
 
