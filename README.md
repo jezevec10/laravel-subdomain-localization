@@ -1,6 +1,6 @@
 # Laravel-Subdomain-Localization
 
-Subdomain localization support for Laravel. Only for **Laravel 5.5+** Version (Fork [LaurentEsc/Laravel-Subdomain-Localization](https://github.com/LaurentEsc/Laravel-Subdomain-Localization))
+Subdomain localization support for Laravel. Only for **Laravel 5.5+** (*) Version (Fork [LaurentEsc/Laravel-Subdomain-Localization](https://github.com/LaurentEsc/Laravel-Subdomain-Localization))
 
 **Changes from upstream:**
 * Added cookie_version (lang selection resets on cookie version mismatch - e.g. 
@@ -11,7 +11,7 @@ Subdomain localization support for Laravel. Only for **Laravel 5.5+** Version (F
 * Default language is without subdomain
 * Switching to language without subdomain done with langSwitch param 
 * Redirecting only GET request and only not ajax
-* To support Laravel 5.4, remove 2nd parameter to `Crypt::decrypt()` in Localize.php, see b01d1d9e
+* *To support Laravel 5.4, remove 2nd parameter to `Crypt::decrypt()` in Localize.php, see `b01d1d9e`
 
 ## Table of Contents
 
