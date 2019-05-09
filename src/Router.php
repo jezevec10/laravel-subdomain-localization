@@ -141,6 +141,14 @@ class Router
         $uri = app()['url']->getRequest()->path();
         $currentLocale = app()->getLocale();
 
+        // first check if route is available in current locale
+        foreach (Arr::dot(app()['translator']->trans($transNamespace, [], $currentLocale)) as $routePath) {
+            if (ltrim($routePath, '/') == $uri) {
+                return false;
+            }
+        }
+
+        // if not, check in other locales
         foreach (app()['localization.localize']->getAvailableLocales() as $locale) {
             if ($locale == $currentLocale) {
                 continue;
