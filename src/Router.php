@@ -1,6 +1,7 @@
 <?php namespace LaurentEsc\Localization;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class Router
 {
@@ -127,6 +128,32 @@ class Router
         }
 
         return $routePath;
+    }
+
+    /**
+     * Find out if path is available in another language
+     *
+     * @param $transNamespace
+     * @return bool|string
+     */
+    public function pathAvailableInAnotherLanguage($transNamespace = 'routes')
+    {
+        $uri = app()['url']->getRequest()->path();
+        $currentLocale = app()->getLocale();
+
+        foreach (app()['localization.localize']->getAvailableLocales() as $locale) {
+            if ($locale == $currentLocale) {
+                continue;
+            }
+
+            foreach (Arr::dot(app()['translator']->trans($transNamespace, [], $locale)) as $routeName => $routePath) {
+                if (ltrim($routePath, '/') == $uri) {
+                    return $this->url($transNamespace . '.' . $routeName, null, $locale);
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
