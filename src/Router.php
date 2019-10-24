@@ -142,7 +142,7 @@ class Router
         $currentLocale = app()->getLocale();
 
         // first check if route is available in current locale
-        foreach (Arr::dot(app()['translator']->trans($transNamespace, [], $currentLocale)) as $routePath) {
+        foreach (Arr::dot(app()['translator']->get($transNamespace, [], $currentLocale)) as $routePath) {
             if (ltrim($routePath, '/') == $uri) {
                 return false;
             }
@@ -154,7 +154,7 @@ class Router
                 continue;
             }
 
-            foreach (Arr::dot(app()['translator']->trans($transNamespace, [], $locale)) as $routeName => $routePath) {
+            foreach (Arr::dot(app()['translator']->get($transNamespace, [], $locale)) as $routeName => $routePath) {
                 if (ltrim($routePath, '/') == $uri) {
                     return $this->url($transNamespace . '.' . $routeName, null, $locale);
                 }
@@ -223,7 +223,7 @@ class Router
     protected function findRoutePathByName($routeName, $locale = null)
     {
         if (app()['translator']->has($routeName, $locale)) {
-            return $routePath = app()['translator']->trans($routeName, [], $locale);
+            return $routePath = app()['translator']->get($routeName, [], $locale);
         }
 
         return false;
