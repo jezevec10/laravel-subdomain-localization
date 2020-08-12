@@ -105,10 +105,8 @@ class Router
             return false;
         }
 
-        // If attributes are given, substitute them in the path
-        if ($routeAttributes) {
-            $parsed_url['path'] = $this->substituteAttributesInRoute($routeAttributes, $parsed_url['path']);
-        }
+        // Substitute attributes in the path
+        $parsed_url['path'] = $this->substituteAttributesInRoute($routeAttributes, $parsed_url['path']);
 
         return $this->unparseUrl($parsed_url);
     }
@@ -270,9 +268,11 @@ class Router
      */
     protected function substituteAttributesInRoute($attributes, $route)
     {
-        foreach ($attributes as $key => $value) {
-            $route = str_replace("{" . $key . "}", $value, $route);
-            $route = str_replace("{" . $key . "?}", $value, $route);
+        if(isset($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $route = str_replace("{" . $key . "}", $value, $route);
+                $route = str_replace("{" . $key . "?}", $value, $route);
+            }
         }
 
         // delete empty optional arguments that are not in the $attributes array
