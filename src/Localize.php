@@ -12,6 +12,8 @@ class Localize
      */
     public function shouldRedirect()
     {
+        if(!$this->isDomainLocalizationEnabled()) return false;
+
         $request = app()['request'];
         if(!$request->isMethod('get') || $request->ajax()){
           return false;
@@ -31,9 +33,12 @@ class Localize
      */
     public function detectLocale()
     {
+        $locale = null;
 
         // Get the current locale from the URL
-        $locale = $this->getUrlLocale();
+        if($this->isDomainLocalizationEnabled()){
+            $locale = $this->getUrlLocale();
+        }
 
         if(!$this->isLocaleAvailable($locale) && app()['request']->has("langSwitch")){
             $locale = app()['request']->get("langSwitch");
@@ -66,6 +71,17 @@ class Localize
     {
         return app()['config']->get('localization.available_locales');
     }
+
+    /**
+     * Get domain localization status from package config
+     *
+     * @return array
+     */
+    protected function isDomainLocalizationEnabled()
+    {
+        return app()['config']->get('localization.domain_localization');
+    }
+
 
     /**
      * Get cookie localization status from package config
