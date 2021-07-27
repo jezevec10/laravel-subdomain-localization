@@ -1,6 +1,7 @@
 <?php namespace LaurentEsc\Localization;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class Router
 {
@@ -100,10 +101,8 @@ class Router
         if($locale!='en')
             $parsed_url['host'] = $locale . '.' . $this->getDomain();
 
-        // If attributes are given, substitute them in the path
-        if ($routeAttributes) {
-            $parsed_url['path'] = $this->substituteAttributesInRoute($routeAttributes, $parsed_url['path']);
-        }
+        // Substitute attributes in the path
+        $parsed_url['path'] = $this->substituteAttributesInRoute($routeAttributes, $parsed_url['path']);
 
         if($addLangSwitch){
             if (isset($parsed_url['query']) && $parsed_url['query']) {
@@ -133,6 +132,40 @@ class Router
         }
 
         return $routePath;
+    }
+
+    /**
+     * Find out if path is available in another language
+     *
+     * @param $transNamespace
+     * @return bool|string
+     */
+    public function pathAvailableInAnotherLanguage($transNamespace = 'routes')
+    {
+        $uri = app()['url']->getRequest()->path();
+        $currentLocale = app()->getLocale();
+
+        // first check if route is available in current locale
+        foreach (Arr::dot(app()['translator']->get($transNamespace, [], $currentLocale)) as $routePath) {
+            if (ltrim($routePath, '/') == $uri) {
+                return false;
+            }
+        }
+
+        // if not, check in other locales
+        foreach (app()['localization.localize']->getAvailableLocales() as $locale) {
+            if ($locale == $currentLocale) {
+                continue;
+            }
+
+            foreach (Arr::dot(app()['translator']->get($transNamespace, [], $locale)) as $routeName => $routePath) {
+                if (ltrim($routePath, '/') == $uri) {
+                    return $this->url($transNamespace . '.' . $routeName, null, $locale);
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -194,7 +227,7 @@ class Router
     protected function findRoutePathByName($routeName, $locale = null)
     {
         if (app()['translator']->has($routeName, $locale)) {
-            return $routePath = app()['translator']->trans($routeName, [], $locale);
+            return $routePath = app()['translator']->get($routeName, [], $locale);
         }
 
         return false;
@@ -241,9 +274,11 @@ class Router
      */
     protected function substituteAttributesInRoute($attributes, $route)
     {
-        foreach ($attributes as $key => $value) {
-            $route = str_replace("{" . $key . "}", $value, $route);
-            $route = str_replace("{" . $key . "?}", $value, $route);
+        if(isset($attributes)) {
+            foreach ($attributes as $key => $value) {
+                $route = str_replace("{" . $key . "}", $value, $route);
+                $route = str_replace("{" . $key . "?}", $value, $route);
+            }
         }
 
         // delete empty optional arguments that are not in the $attributes array
